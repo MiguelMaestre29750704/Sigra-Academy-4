@@ -26,6 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const closePrelacionesModal = document.getElementById('close-prelaciones-modal');
     const prelacionesList = document.getElementById('prelaciones-list');
     
+    // Botón Cancelar de la configuración
+    const cancelConfigBtn = document.getElementById('cancel-config-btn');
+    
     let filaAEliminar = null;
     let materiaPrincipalSeleccionada = null;
 
@@ -412,4 +415,55 @@ document.addEventListener('DOMContentLoaded', () => {
             prelacionesModal.classList.remove('active');
         }
     });
+
+    // --- 8. Cancelar Configuración de Prelaciones ---
+    if (cancelConfigBtn) {
+        cancelConfigBtn.addEventListener('click', () => {
+            // 1. Limpiar materia principal seleccionada
+            if (selectedMateriaContainer.style.display !== 'none') {
+                selectedMateriaContainer.style.opacity = '0';
+                setTimeout(() => {
+                    selectedMateriaContainer.style.display = 'none';
+                }, 300);
+            }
+            
+            // 2. Restablecer el campo de búsqueda de materia principal
+            if (materiaSearch) {
+                materiaSearch.value = '';
+            }
+            
+            // 3. Restablecer variable de materia seleccionada
+            materiaPrincipalSeleccionada = null;
+            
+            // 4. Limpiar la lista de prerrequisitos añadidos con animación
+            const prereqItems = prereqList.querySelectorAll('.prereq-item');
+            prereqItems.forEach(item => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(20px)';
+                item.style.transition = 'all 0.3s ease';
+                setTimeout(() => item.remove(), 300);
+            });
+            
+            // Limpiar después de las animaciones
+            setTimeout(() => {
+                prereqList.innerHTML = '';
+            }, 350);
+            
+            // 5. Restablecer el select de prerrequisitos
+            prereqSelect.selectedIndex = 0;
+            
+            // 6. Llenar el select con todas las materias nuevamente
+            llenarSelectPrerrequisitos();
+            
+            // 7. Si el botón Guardar estaba en estado "Guardado", restablecerlo
+            if (saveBtn) {
+                saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Prelaciones';
+                saveBtn.style.backgroundColor = '';
+                saveBtn.disabled = false;
+            }
+            
+            // 8. Mensaje de confirmación (opcional)
+            console.log('Configuración cancelada. Todos los campos han sido restablecidos.');
+        });
+    }
 });
