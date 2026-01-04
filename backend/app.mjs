@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import { SETTINGS } from './config/settings.config.mjs';
 import { ListRoutes } from './src/api/routes/api.routes.mjs';
 import { registerRoutes } from './src/core/utils/function.util.mjs';
+// import { RecordsRoutes } from './src/modules/grades-record-V/records/records.route.mjs'; | Conexión con las rutas para comprobar el servidor
 
 // Se inicializan el servidor express
 const app = express();
@@ -14,6 +15,7 @@ app.use(cors({
 }));
 app.use(json());
 app.use(morgan('dev'));
+// app.use('/api/records', RecordsRoutes); | Conexión con las rutas para comprobar el servidor
 
 // Rutas
 app.get('/', (req, res) => {
