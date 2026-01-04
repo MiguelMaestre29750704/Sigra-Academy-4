@@ -4,7 +4,8 @@ import morgan from 'morgan';
 import { SETTINGS } from './config/settings.config.mjs';
 import controlRouter from './src/modules/access-control-I/control.route.mjs';
 import { getUser as getUserModel } from './src/modules/access-control-I/control.model.mjs';
-import { ListRoutes } from './src/api/routes/api.routes.mjs';
+import { subjectRoute } from './src/modules/academic-structure-II/subjects/subjects.route.mjs';
+import prelaciesRoute from './src/modules/academic-structure-II/prelacies/prelacies.route.mjs';
 
 // Se inicializan el servidor express
 const app = express();
@@ -39,7 +40,9 @@ app.get('/test/users', async (req, res) => {
     }
 })
 
-app.use(ListRoutes.subject)
+app.use('/api/subjects', subjectRoute)
+// Rutas para prelaciones: /api/subjects/prelaciones
+app.use('/api/subjects/prelaciones', prelaciesRoute)
 
 // Montamos el servidor
 app.listen(SETTINGS.PORT, () => {

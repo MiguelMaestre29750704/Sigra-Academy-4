@@ -32,9 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let filaAEliminar = null;
     let materiaPrincipalSeleccionada = null;
 
-    // Datos de las materias del PDF (1er y 2do año)
+    // Materias completas (1er a 5to año, según el txt)
     const materias = [
-        // Primer Año
+        // 1er Año
         { codigo: 'MAT-204', nombre: 'Matematica I', año: '1er Año' },
         { codigo: 'FIS-201', nombre: 'Fisica I', año: '1er Año' },
         { codigo: 'QUI-299', nombre: 'Quimica I', año: '1er Año' },
@@ -43,10 +43,10 @@ document.addEventListener('DOMContentLoaded', () => {
         { codigo: 'DIB-309', nombre: 'Dibujo I', año: '1er Año' },
         { codigo: 'LIT-199', nombre: 'Lenguaje y Literatura I', año: '1er Año' },
         { codigo: 'HIS-101', nombre: 'Historia General', año: '1er Año' },
-        { codigo: 'GEO-301', nombre: 'Geografía I', año: '1er Año' },
+        { codigo: 'GEO-301', nombre: 'Geografia I', año: '1er Año' },
         { codigo: 'DEP-401', nombre: 'Deporte I', año: '1er Año' },
         { codigo: 'ING-601', nombre: 'Ingles I', año: '1er Año' },
-        // Segundo Año
+        // 2do Año
         { codigo: 'MAT-205', nombre: 'Matematica II', año: '2do Año' },
         { codigo: 'FIS-202', nombre: 'Fisica II', año: '2do Año' },
         { codigo: 'QUI-300', nombre: 'Quimica II', año: '2do Año' },
@@ -55,9 +55,45 @@ document.addEventListener('DOMContentLoaded', () => {
         { codigo: 'DIB-310', nombre: 'Dibujo II', año: '2do Año' },
         { codigo: 'LIT-200', nombre: 'Lenguaje y Literatura II', año: '2do Año' },
         { codigo: 'HIS-102', nombre: 'Historia II', año: '2do Año' },
-        { codigo: 'GEO-302', nombre: 'Geografía II', año: '2do Año' },
+        { codigo: 'GEO-302', nombre: 'Geografia II', año: '2do Año' },
         { codigo: 'DEP-402', nombre: 'Deporte II', año: '2do Año' },
-        { codigo: 'ING-602', nombre: 'Ingles II', año: '2do Año' }
+        { codigo: 'ING-602', nombre: 'Ingles II', año: '2do Año' },
+        // 3er Año
+        { codigo: 'MAT-206', nombre: 'Matematica III', año: '3er Año' },
+        { codigo: 'FIS-203', nombre: 'Fisica III', año: '3er Año' },
+        { codigo: 'QUI-301', nombre: 'Quimica III', año: '3er Año' },
+        { codigo: 'BIO-503', nombre: 'Biologia III', año: '3er Año' },
+        { codigo: 'COM-405', nombre: 'Computacion III', año: '3er Año' },
+        { codigo: 'DIB-311', nombre: 'Dibujo III', año: '3er Año' },
+        { codigo: 'LIT-201', nombre: 'Lenguaje y Literatura III', año: '3er Año' },
+        { codigo: 'HIS-103', nombre: 'Historia III', año: '3er Año' },
+        { codigo: 'GEO-303', nombre: 'Geografia III', año: '3er Año' },
+        { codigo: 'DEP-403', nombre: 'Deporte III', año: '3er Año' },
+        { codigo: 'ING-603', nombre: 'Ingles III', año: '3er Año' },
+        // 4to Año
+        { codigo: 'MAT-207', nombre: 'Matematica IV', año: '4to Año' },
+        { codigo: 'FIS-204', nombre: 'Fisica IV', año: '4to Año' },
+        { codigo: 'QUI-302', nombre: 'Quimica IV', año: '4to Año' },
+        { codigo: 'BIO-504', nombre: 'Biologia IV', año: '4to Año' },
+        { codigo: 'COM-406', nombre: 'Computacion IV', año: '4to Año' },
+        { codigo: 'DIB-312', nombre: 'Dibujo IV', año: '4to Año' },
+        { codigo: 'LIT-202', nombre: 'Lenguaje y Literatura IV', año: '4to Año' },
+        { codigo: 'HIS-104', nombre: 'Historia IV', año: '4to Año' },
+        { codigo: 'GEO-304', nombre: 'Geografia IV', año: '4to Año' },
+        { codigo: 'DEP-404', nombre: 'Deporte IV', año: '4to Año' },
+        { codigo: 'ING-604', nombre: 'Ingles IV', año: '4to Año' },
+        // 5to Año
+        { codigo: 'MAT-208', nombre: 'Matematica V', año: '5to Año' },
+        { codigo: 'FIS-205', nombre: 'Fisica V', año: '5to Año' },
+        { codigo: 'QUI-303', nombre: 'Quimica V', año: '5to Año' },
+        { codigo: 'BIO-505', nombre: 'Biologia V', año: '5to Año' },
+        { codigo: 'COM-407', nombre: 'Computacion V', año: '5to Año' },
+        { codigo: 'DIB-313', nombre: 'Dibujo V', año: '5to Año' },
+        { codigo: 'LIT-203', nombre: 'Lenguaje y Literatura V', año: '5to Año' },
+        { codigo: 'HIS-105', nombre: 'Historia V', año: '5to Año' },
+        { codigo: 'GEO-305', nombre: 'Geografia V', año: '5to Año' },
+        { codigo: 'DEP-405', nombre: 'Deporte V', año: '5to Año' },
+        { codigo: 'ING-605', nombre: 'Ingles V', año: '5to Año' }
     ];
 
     // Datos de ejemplo para prelaciones recientes
@@ -124,51 +160,127 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
-    // Función para buscar materia por código o nombre
+    // Función robusta para buscar materia por código, nombre o combinación exacta
     function buscarMateria(texto) {
         const textoLower = texto.toLowerCase().trim();
-        
-        // Buscar por código
-        let materia = materias.find(m => 
-            m.codigo.toLowerCase() === textoLower || 
-            textoLower.includes(m.codigo.toLowerCase())
+        // 1. Buscar por código exacto (sin espacios)
+        let materia = materias.find(m => m.codigo.toLowerCase() === textoLower.replace(/\s+/g, ''));
+        if (materia) return materia;
+        // 2. Buscar por combinación exacta "CODIGO — Nombre"
+        materia = materias.find(m => `${m.codigo} — ${m.nombre}`.toLowerCase() === textoLower);
+        if (materia) return materia;
+        // 3. Buscar por nombre exacto
+        materia = materias.find(m => m.nombre.toLowerCase() === textoLower);
+        if (materia) return materia;
+        // 4. Buscar por coincidencia parcial única (si solo una materia coincide)
+        const coincidencias = materias.filter(m =>
+            m.codigo.toLowerCase().includes(textoLower) ||
+            m.nombre.toLowerCase().includes(textoLower)
         );
-        
-        // Si no se encuentra por código, buscar por nombre
-        if (!materia) {
-            materia = materias.find(m => 
-                m.nombre.toLowerCase().includes(textoLower) ||
-                textoLower.includes(m.nombre.toLowerCase())
-            );
-        }
-        
-        // Si no se encuentra por nombre exacto, buscar por coincidencia parcial
-        if (!materia) {
-            materia = materias.find(m => 
-                m.nombre.toLowerCase().includes(textoLower.replace(/\s+/g, ' ')) ||
-                `${m.codigo} — ${m.nombre}`.toLowerCase().includes(textoLower)
-            );
-        }
-        
-        return materia;
+        if (coincidencias.length === 1) return coincidencias[0];
+        // 5. Buscar por combinación parcial
+        materia = materias.find(m => `${m.codigo} — ${m.nombre}`.toLowerCase().includes(textoLower));
+        if (materia) return materia;
+        return null;
     }
 
-    // Función para llenar el select de prerrequisitos
+    // Mapa de materias principales a sus preladoras (según el txt)
+    const prelaciones = {
+        // 2DO AÑO
+        'MAT-205': ['MAT-204'],
+        'FIS-202': ['FIS-201'],
+        'QUI-300': ['QUI-299'],
+        'BIO-502': ['BIO-501', 'QUI-299'],
+        'COM-404': ['COM-403'],
+        'DIB-310': ['DIB-309'],
+        'LIT-200': ['LIT-199'],
+        'HIS-102': ['HIS-101'],
+        'GEO-302': ['GEO-301'],
+        'DEP-402': ['DEP-401'],
+        'ING-602': ['ING-601'],
+        // 3ER AÑO
+        'MAT-206': ['MAT-205'],
+        'FIS-203': ['FIS-202'],
+        'QUI-301': ['QUI-300'],
+        'BIO-503': ['BIO-502'],
+        'COM-405': ['COM-404'],
+        'DIB-311': ['DIB-310'],
+        'LIT-201': ['LIT-200'],
+        'HIS-103': ['HIS-102'],
+        'GEO-303': ['GEO-302'],
+        'DEP-403': ['DEP-402'],
+        'ING-603': ['ING-602'],
+        // 4TO AÑO
+        'MAT-207': ['MAT-206'],
+        'FIS-204': ['FIS-203'],
+        'QUI-302': ['QUI-301'],
+        'BIO-504': ['BIO-503'],
+        'COM-406': ['COM-405'],
+        'DIB-312': ['DIB-311'],
+        'LIT-202': ['LIT-201'],
+        'HIS-104': ['HIS-103'],
+        'GEO-304': ['GEO-303'],
+        'DEP-404': ['DEP-403'],
+        'ING-604': ['ING-603'],
+        // 5TO AÑO
+        'MAT-208': ['MAT-207'],
+        'FIS-205': ['FIS-204'],
+        'QUI-303': ['QUI-302'],
+        'BIO-505': ['BIO-504'],
+        'COM-407': ['COM-406'],
+        'DIB-313': ['DIB-312'],
+        'LIT-203': ['LIT-202'],
+        'HIS-105': ['HIS-104'],
+        'GEO-305': ['GEO-304'],
+        'DEP-405': ['DEP-404'],
+        'ING-605': ['ING-604'],
+    };
+
+    // Solo materias que pueden ser preladoras (1er a 4to año)
+    const materiasPreladoras = materias.filter(m => !m.año.includes('5to Año'));
+
+    // Llena el select solo con materias que prelan a la principal
     function llenarSelectPrerrequisitos(materiaPrincipal = null) {
-        // Limpiar select
         prereqSelect.innerHTML = '<option>Seleccione una asignatura...</option>';
-        
-        // Agregar todas las materias excepto la materia principal seleccionada
-        materias.forEach(materia => {
-            // No incluir la materia principal en la lista de prerrequisitos
-            if (!materiaPrincipal || materia.codigo !== materiaPrincipal.codigo) {
+        prereqSelect.disabled = false;
+        addPrereqBtn.disabled = false;
+
+        // Si la materia principal es de 1er año, no tiene preladoras
+        if (materiaPrincipal && materiaPrincipal.año.includes('1er Año')) {
+            prereqSelect.innerHTML = '<option>No tiene prerrequisitos</option>';
+            prereqSelect.disabled = true;
+            addPrereqBtn.disabled = true;
+            return;
+        }
+
+        // Si hay materia principal y tiene preladoras según el mapa
+        if (materiaPrincipal && prelaciones[materiaPrincipal.codigo]) {
+            const codigosPreladoras = prelaciones[materiaPrincipal.codigo];
+            materiasPreladoras.forEach(materia => {
+                if (codigosPreladoras.includes(materia.codigo)) {
+                    const option = document.createElement('option');
+                    option.value = materia.codigo;
+                    option.textContent = `${materia.codigo} — ${materia.nombre}`;
+                    option.dataset.año = materia.año;
+                    prereqSelect.appendChild(option);
+                }
+            });
+            // Si no hay preladoras, deshabilitar
+            if (codigosPreladoras.length === 0) {
+                prereqSelect.innerHTML = '<option>No tiene prerrequisitos</option>';
+                prereqSelect.disabled = true;
+                addPrereqBtn.disabled = true;
+            }
+        } else {
+            // Si no hay materia principal, mostrar todas menos 5to año
+            materiasPreladoras.forEach(materia => {
                 const option = document.createElement('option');
                 option.value = materia.codigo;
                 option.textContent = `${materia.codigo} — ${materia.nombre}`;
                 option.dataset.año = materia.año;
                 prereqSelect.appendChild(option);
-            }
-        });
+            });
+        }
     }
 
     // Función para cargar las prelaciones en el modal
@@ -239,8 +351,35 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Guardar la materia seleccionada
                     materiaPrincipalSeleccionada = materia;
                     
-                    // Actualizar el select de prerrequisitos (excluyendo la materia principal)
-                    llenarSelectPrerrequisitos(materia);
+                    // Actualizar el select de prerrequisitos consultando el backend
+                    // Si el backend responde sin prerrequisitos, se volverá a llenar con todas
+                    fetch(`/api/subjects/prelaciones/prereqs/${materia.codigo}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data && Array.isArray(data.prerequisites) && data.prerequisites.length) {
+                                // llenar el select solo con los prerrequisitos devueltos
+                                prereqSelect.innerHTML = '<option>Seleccione una asignatura...</option>';
+                                prereqSelect.disabled = false;
+                                addPrereqBtn.disabled = false;
+                                data.prerequisites.forEach(s => {
+                                    const option = document.createElement('option');
+                                    option.value = s.code;
+                                    option.textContent = `${s.code} — ${s.name}`;
+                                    option.dataset.año = s.year;
+                                    prereqSelect.appendChild(option);
+                                });
+                            } else {
+                                // Si no hay prerrequisitos configurados, dejar el select vacío y deshabilitado
+                                prereqSelect.innerHTML = '<option>No tiene prerrequisitos</option>';
+                                prereqSelect.disabled = true;
+                                addPrereqBtn.disabled = true;
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Error fetching prerequisites:', err);
+                            // En caso de error, volver al comportamiento por defecto
+                            llenarSelectPrerrequisitos(materia);
+                        });
                     
                     // Limpiar el campo de búsqueda
                     this.value = '';
