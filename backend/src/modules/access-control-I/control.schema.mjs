@@ -13,7 +13,7 @@ const createdSchemaUser = z.object({
 // Esquema de validación para el inicio de sesión de un usuario
 const loginSchemaUser = z.object({
   email: z.string().email().max(100),
-  password: z.string().min(6).max(100)
+  password_hash: z.string().min(6).max(100)
 });
 
 // Esquema de validación para la actualización de un usuario

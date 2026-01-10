@@ -64,7 +64,7 @@ export class UserModel {
 		}
 		// Si todo esta bien, se crea el usuario, se hashea la contraseña
 		const hashedPassword = await bcrypt.hash(rest.password_hash, 10);
-		const result = await db.query(
+		const [result] = await db.query(
 			`INSERT INTO users (role_id, first_name, last_name, email, phone, password_hash)
 			VALUES (?, ?, ?, ?, ?, ?)`,
 			[role_id, rest.first_name, rest.last_name, rest.email, rest.phone, hashedPassword]
@@ -74,17 +74,18 @@ export class UserModel {
 			`SELECT * FROM users WHERE user_id = ?`,
 			[result.insertId]
 		);
-		if(createdUser.length === 0) return {error: 'Error al crear el usuario'};
+		if(createdUser.affectedRows === 0) return {error: 'Error al crear el usuario'};
+		const {password_hash, ...userWithoutPassword} = createdUser[0];
 		return {
 			message: 'Usuario creado correctamente',
-			user: createdUser
+			user: userWithoutPassword
 		}
 	}
 
 	// Método para loguear un usuario
 	static async loginUser(data){
 		if(!data) return {error: 'Faltan datos para iniciar sesión'};
-		const {email, password} = data;
+		const {email, password_hash} = data;
 		// Se verifica si el usuario existe
 		const [existingUser] = await db.query(
 			`SELECT * FROM users WHERE email = ?`,
@@ -92,7 +93,7 @@ export class UserModel {
 		);
 		if(existingUser.length === 0) return {error: 'Usuario no encontrado'};
 		// Si existe, se verifica la contraseña
-		const passwordMatch = await bcrypt.compare(password, existingUser[0].password_hash);
+		const passwordMatch = await bcrypt.compare(password_hash, existingUser[0].password_hash);
 		if(!passwordMatch) return {error: 'Contraseña incorrecta'};
 		// Si es correcta, se asigna el token de sesión
 		const token = await assignTokenToSession(existingUser[0].user_id);

@@ -50,7 +50,7 @@ export class subjectModel{
             return {error: 'Grado no encontrado o materia ya existe'};
         }
         // Si todo esta bien, se crea la materia
-        const result = await db.query(
+        const [result] = await db.query(
             `INSERT INTO subjects (grade_id, subject_name, code_subject, description)
             VALUES (?, ?, ?, ?)`,
             [grade_id, rest.subject_name, rest.code_subject, rest.description]
@@ -92,7 +92,7 @@ export class subjectModel{
             fields.push(`${key} = ?`);
             values.push(value);
         });
-        values.push(subject_id); // Agrega el subject_id al final para la cláusula WHERE
+        values.push(subjectId); // Agrega el subject_id al final para la cláusula WHERE
 
         const [updatedSubject] = await db.query(
             `UPDATE subjects SET ${fields.join(', ')} WHERE subject_id = ?`,
@@ -102,7 +102,7 @@ export class subjectModel{
         // Se obtiene la materia actualizada
         const [subject] = await db.query(
             `SELECT * FROM subjects WHERE subject_id = ? LIMIT 1`,
-            [subject_id]
+            [subjectId]
         );
         return {
             message: 'Materia actualizada correctamente',

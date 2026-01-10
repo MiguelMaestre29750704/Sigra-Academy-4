@@ -1,3 +1,4 @@
+import { is } from "zod/v4/locales";
 import { validateCreateUser, validateLoginUser, validateUpdateUser } from "./control.schema.mjs";
 
 // Controlador para la gestión de usuarios y control de acceso
@@ -71,6 +72,7 @@ export class ControlController {
 			});
 		}
 		catch(error){
+			console.error(error)
 			return res.status(500).json({error: 'Error del servidor'});
 		}
 	}
@@ -94,6 +96,7 @@ export class ControlController {
 			});
 		}
 		catch(error){
+			console.error(error)
 			return res.status(500).json({error: 'Error del servidor'});
 		}
 	}
@@ -149,5 +152,20 @@ export class ControlController {
 		catch(error){
 			return res.status(500).json({error: 'Error del servidor'});
 		}
+	}
+
+	// Controlador para la verificar si el usuario está autenticado
+	verifyAuth = async (req, res) => {
+		if(!req.user){
+			return res.status(401).json({
+				error: 'Usuario no autenticado',
+				isAuthenticated: false
+			});
+		}
+		return res.status(200).json({
+			message: 'Usuario autenticado',
+			isAuthenticated: true,
+			user: req.user
+		});
 	}
 }
